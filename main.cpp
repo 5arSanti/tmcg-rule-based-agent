@@ -172,6 +172,97 @@ Movimientos obtener_movimientos_validos(int tablero[][COLUMNAS],
   return resultado;
 }
 
+int elegir_movimiento_aleatorio(int arr[], int n) {
+  if (n <= 0)
+    return -1;
+  return arr[std::rand() % n];
+}
+
+// mover_raton refactorizado: más legible y con los mismos comportamientos.
+void mover_raton(int tablero[][COLUMNAS], bool visitado[][COLUMNAS],
+                 int &fila_raton, int &col_raton) {
+
+  // Obtener movimientos posibles (máximo 4)
+  Movimientos movs =
+      obtener_movimientos_validos(tablero, visitado, fila_raton, col_raton);
+
+  if (movs.num_movs == 0)
+    return;
+
+  // Arrays para almacenar los índices (k) de movs.movs que cumplen cada
+  // categoría.
+  int safe_unvisited[4], n_safe_unvisited = 0;
+  int danger_unvisited[4], n_danger_unvisited = 0;
+  int safe_visited[4], n_safe_visited = 0;
+  int all_candidates[4], n_all = 0;
+
+  // Clasificar cada movimiento en una (o más) categoría según la celda destino.
+  for (int k = 0; k < movs.num_movs; ++k) {
+    int rf = movs.movs[k][0];            // fila de la celda destino
+    int rc = movs.movs[k][1];            // fila y columna de la celda destino
+    int valor_destino = tablero[rf][rc]; // valor de la celda destino
+
+    all_candidates[n_all++] = k;
+
+    bool es_gato_o_trampa =
+        (valor_destino == VALOR_GATO || valor_destino == VALOR_TRAMPA);
+    bool es_peligro = (valor_destino == VALOR_PELIGRO);
+    bool ya_visitado = visitado[rf][rc];
+
+    // Prioridad 1: seguro (no peligro), no gato/trampa, no visitado
+    if (!es_peligro && !es_gato_o_trampa && !ya_visitado) {
+      safe_unvisited[n_safe_unvisited++] = k;
+      continue;
+    }
+
+    // Prioridad 2: peligro y no visitado (arriesgarse)
+    if (es_peligro && !ya_visitado && !es_gato_o_trampa) {
+      danger_unvisited[n_danger_unvisited++] = k;
+      continue;
+    }
+
+    // Alternativa: seguro pero ya visitado
+    if (!es_peligro && !es_gato_o_trampa && ya_visitado) {
+      safe_visited[n_safe_visited++] = k;
+      continue;
+    }
+  }
+
+  int indice_movimiento_elegido =
+      elegir_movimiento_aleatorio(safe_unvisited, n_safe_unvisited);
+
+  if (indice_movimiento_elegido == -1)
+    indice_movimiento_elegido =
+        elegir_movimiento_aleatorio(danger_unvisited, n_danger_unvisited);
+
+  if (indice_movimiento_elegido == -1)
+    indice_movimiento_elegido =
+        elegir_movimiento_aleatorio(safe_visited, n_safe_visited);
+
+  if (indice_movimiento_elegido == -1)
+    indice_movimiento_elegido =
+        elegir_movimiento_aleatorio(all_candidates, n_all);
+
+  // Ejecutar movimiento elegido
+  int nueva_fila = movs.movs[indice_movimiento_elegido][0];
+  int nueva_columna = movs.movs[indice_movimiento_elegido][1];
+
+  // Guardar lo que había antes en la celda destino (usado por verificar_estado)
+  ultimo_valor_destino = tablero[nueva_fila][nueva_columna];
+
+  // Marcar la celda anterior como vacía y registrada como visitada
+  tablero[fila_raton][col_raton] = 0;
+  visitado[fila_raton][col_raton] = true;
+
+  // Colocar ratón en nueva posición (sobrescribe cualquier valor;
+  // verificar_estado usará ultimo_valor_destino)
+  tablero[nueva_fila][nueva_columna] = 1;
+
+  // Actualizar coordenadas
+  fila_raton = nueva_fila;
+  col_raton = nueva_columna;
+}
+
 int main() {
   static int tablero_real[FILAS][COLUMNAS];
   static bool visitado[FILAS][COLUMNAS];
