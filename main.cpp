@@ -23,6 +23,7 @@ const int VALOR_RATON = 1;
 const int VALOR_GATO = 2;
 const int VALOR_TRAMPA = 3;
 const int VALOR_QUESO = 4;
+const int VALOR_PELIGRO = 5;
 
 void inicializar_tableros(int tablero[][COLUMNAS], bool visitado[][COLUMNAS]) {
   for (int i = 0; i < FILAS; i++) {
@@ -57,9 +58,37 @@ void colocar_actores(int tablero[][COLUMNAS]) {
   randomizar_actores(tablero, NUM_QUESOS, VALOR_QUESO);
 }
 
+void marcar_celdas_adyacentes_como_peligrosas(int tablero[][COLUMNAS], int fila,
+                                              int columna) {
+  if (fila - 1 >= 0 && tablero[fila - 1][columna] == 0)
+    tablero[fila - 1][columna] = VALOR_PELIGRO;
+  // abajo
+  if (fila + 1 < FILAS && tablero[fila + 1][columna] == 0)
+    tablero[fila + 1][columna] = VALOR_PELIGRO;
+  // izquierda
+  if (columna - 1 >= 0 && tablero[fila][columna - 1] == 0)
+    tablero[fila][columna - 1] = VALOR_PELIGRO;
+  // derecha
+  if (columna + 1 < COLUMNAS && tablero[fila][columna + 1] == 0)
+    tablero[fila][columna + 1] = VALOR_PELIGRO;
+}
+
+void calcular_peligros(int tablero[][COLUMNAS]) {
+  for (int i = 0; i < FILAS; i++) {
+    for (int j = 0; j < COLUMNAS; j++) {
+      if (tablero[i][j] == VALOR_GATO) {
+        marcar_celdas_adyacentes_como_peligrosas(tablero, i, j);
+      }
+    }
+  }
+}
+
 int main() {
   static int tablero_real[FILAS][COLUMNAS];
   static bool visitado[FILAS][COLUMNAS];
 
   inicializar_tableros(tablero_real, visitado);
+
+  colocar_actores(tablero_real);
+  calcular_peligros(tablero_real);
 }
