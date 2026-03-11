@@ -263,6 +263,17 @@ void mover_raton(int tablero[][COLUMNAS], bool visitado[][COLUMNAS],
   col_raton = nueva_columna;
 }
 
+int verificar_estado(int tablero[][COLUMNAS], int fila, int col, int turno) {
+  if (ultimo_valor_destino == VALOR_QUESO)
+    return ESTADO_VICTORIA;
+  if (ultimo_valor_destino == VALOR_GATO)
+    return ESTADO_GATO;
+  if (ultimo_valor_destino == VALOR_TRAMPA)
+    return ESTADO_TRAMPA;
+
+  return ESTADO_EN_CURSO;
+}
+
 int main() {
   static int tablero_real[FILAS][COLUMNAS];
   static bool visitado[FILAS][COLUMNAS];
@@ -283,5 +294,14 @@ int main() {
     imprimir_tablero(tablero_real, visitado, turno, fila_raton, col_raton);
 
     mover_raton(tablero_real, visitado, fila_raton, col_raton);
+
+    estado = verificar_estado(tablero_real, fila_raton, col_raton, turno);
+
+    if (estado != ESTADO_EN_CURSO) {
+      imprimir_tablero(tablero_real, visitado, turno, fila_raton, col_raton);
+      break;
+    }
+
+    ++turno;
   }
 }
