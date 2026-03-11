@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <iostream>
 
 const int FILAS = 12;
 const int COLUMNAS = 10;
@@ -93,6 +94,45 @@ int *colocar_raton(int tablero[][COLUMNAS], bool visitado[][COLUMNAS]) {
   return new int[2]{fila_raton, col_raton};
 }
 
+void imprimir_tablero(int tablero[][COLUMNAS], bool visitado[][COLUMNAS],
+                      int turno, int fila_raton, int col_raton) {
+  // Limpiar consola (Unix)
+  system("clear");
+
+  std::cout << "Turno: " << turno << "\n\n";
+
+  for (int fila = 0; fila < FILAS; ++fila) {
+    for (int columna = 0; columna < COLUMNAS; ++columna) {
+      char c = '.';
+      int val = tablero[fila][columna];
+
+      bool raton_en_celda = fila == fila_raton && columna == col_raton;
+
+      if (raton_en_celda) {
+        c = 'R';
+      } else if (val == VALOR_VACIO) {
+        bool celda_visitada = visitado[fila][columna];
+        if (celda_visitada)
+          c = '*';
+        else
+          c = '.';
+      } else if (val == VALOR_GATO)
+        c = 'G';
+      else if (val == VALOR_TRAMPA)
+        c = 'T';
+      else if (val == VALOR_QUESO)
+        c = 'Q';
+      else if (val == VALOR_PELIGRO)
+        c = '!';
+      else
+        c = '?';
+
+      std::cout << c << ' ';
+    }
+    std::cout << '\n';
+  }
+}
+
 int main() {
   static int tablero_real[FILAS][COLUMNAS];
   static bool visitado[FILAS][COLUMNAS];
@@ -110,6 +150,6 @@ int main() {
   int turno = 1;
 
   while (juego_activo) {
-
+    imprimir_tablero(tablero_real, visitado, turno, fila_raton, col_raton);
   }
 }
