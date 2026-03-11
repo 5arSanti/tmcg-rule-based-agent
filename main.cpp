@@ -23,3 +23,10 @@ void inicializar_tablero(int tablero[][COLUMNAS]) {
     }
   }
 }
+
+int main() {
+  static int tablero_real[FILAS][COLUMNAS];
+  static bool visitado[FILAS][COLUMNAS];
+
+  inicializar_tablero(tablero_real);
+}
