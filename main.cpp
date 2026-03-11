@@ -281,5 +281,7 @@ int main() {
 
   while (juego_activo) {
     imprimir_tablero(tablero_real, visitado, turno, fila_raton, col_raton);
+
+    mover_raton(tablero_real, visitado, fila_raton, col_raton);
   }
 }
