@@ -6,3 +6,4 @@ const int NUM_QUESOS = 1;
 const int POS_INICIAL_RATON_F = 0;
 const int POS_INICIAL_RATON_C = 0;
 const int PAUSA_MS = 1000;
+const int MAX_TURNOS = FILAS * COLUMNAS * 2;
