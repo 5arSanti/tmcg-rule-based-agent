@@ -133,6 +133,36 @@ void imprimir_tablero(int tablero[][COLUMNAS], bool visitado[][COLUMNAS],
   }
 }
 
+void obtener_movimientos_validos(int tablero[][COLUMNAS],
+                                 bool visitado[][COLUMNAS], int fila, int col,
+                                 int movs[][2], int &num_movs) {
+  num_movs = 0;
+  // Arriba
+  if (fila - 1 >= 0) {
+    movs[num_movs][0] = fila - 1;
+    movs[num_movs][1] = col;
+    ++num_movs;
+  }
+  // Abajo
+  if (fila + 1 < FILAS) {
+    movs[num_movs][0] = fila + 1;
+    movs[num_movs][1] = col;
+    ++num_movs;
+  }
+  // Izquierda
+  if (col - 1 >= 0) {
+    movs[num_movs][0] = fila;
+    movs[num_movs][1] = col - 1;
+    ++num_movs;
+  }
+  // Derecha
+  if (col + 1 < COLUMNAS) {
+    movs[num_movs][0] = fila;
+    movs[num_movs][1] = col + 1;
+    ++num_movs;
+  }
+}
+
 int main() {
   static int tablero_real[FILAS][COLUMNAS];
   static bool visitado[FILAS][COLUMNAS];
