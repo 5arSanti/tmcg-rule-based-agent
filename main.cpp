@@ -98,11 +98,18 @@ int main() {
   static bool visitado[FILAS][COLUMNAS];
 
   inicializar_tableros(tablero_real, visitado);
-
   colocar_actores(tablero_real);
   calcular_peligros(tablero_real);
 
   int *posicion_raton = colocar_raton(tablero_real, visitado);
   int fila_raton = posicion_raton[0];
   int col_raton = posicion_raton[1];
+
+  bool juego_activo = true;
+  int estado = ESTADO_EN_CURSO;
+  int turno = 1;
+
+  while (juego_activo) {
+
+  }
 }
