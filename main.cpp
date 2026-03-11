@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <iostream>
+#include <unistd.h> // usleep
 
 const int FILAS = 12;
 const int COLUMNAS = 10;
@@ -9,7 +10,6 @@ const int NUM_QUESOS = 1;
 const int POS_INICIAL_RATON_F = 0;
 const int POS_INICIAL_RATON_C = 0;
 const int PAUSA_MS = 1000;
-const int MAX_TURNOS = FILAS * COLUMNAS * 2;
 
 const int ESTADO_EN_CURSO = 0;
 const int ESTADO_VICTORIA = 1;
@@ -274,6 +274,20 @@ int verificar_estado(int tablero[][COLUMNAS], int fila, int col, int turno) {
   return ESTADO_EN_CURSO;
 }
 
+void mostrar_resultado(int estado) {
+  if (estado == ESTADO_VICTORIA) {
+    std::cout << "\n¡El ratón encontró el queso!\n";
+  } else if (estado == ESTADO_GATO) {
+    std::cout << "\n¡El ratón fue atrapado por un gato!\n";
+  } else if (estado == ESTADO_TRAMPA) {
+    std::cout << "\n¡El ratón cayó en una trampa!\n";
+  } else if (estado == ESTADO_EMPATE) {
+    std::cout << "\nEl ratón no encontró una salida.\n";
+  } else {
+    std::cout << "\nJuego terminado.\n";
+  }
+}
+
 int main() {
   static int tablero_real[FILAS][COLUMNAS];
   static bool visitado[FILAS][COLUMNAS];
@@ -299,8 +313,11 @@ int main() {
 
     if (estado != ESTADO_EN_CURSO) {
       imprimir_tablero(tablero_real, visitado, turno, fila_raton, col_raton);
+      mostrar_resultado(estado);
       break;
     }
+
+    usleep(PAUSA_MS * 1000);
 
     ++turno;
   }
