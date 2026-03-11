@@ -204,25 +204,24 @@ void mover_raton(int tablero[][COLUMNAS], bool visitado[][COLUMNAS],
 
     all_candidates[n_all++] = k;
 
-    bool es_gato_o_trampa =
-        (valor_destino == VALOR_GATO || valor_destino == VALOR_TRAMPA);
+    bool es_gato = (valor_destino == VALOR_GATO);
     bool es_peligro = (valor_destino == VALOR_PELIGRO);
     bool ya_visitado = visitado[rf][rc];
 
     // Prioridad 1: seguro (no peligro), no gato/trampa, no visitado
-    if (!es_peligro && !es_gato_o_trampa && !ya_visitado) {
+    if (!es_peligro && !es_gato && !ya_visitado) {
       safe_unvisited[n_safe_unvisited++] = k;
       continue;
     }
 
     // Prioridad 2: peligro y no visitado (arriesgarse)
-    if (es_peligro && !ya_visitado && !es_gato_o_trampa) {
+    if (es_peligro && !ya_visitado && !es_gato) {
       danger_unvisited[n_danger_unvisited++] = k;
       continue;
     }
 
     // Alternativa: seguro pero ya visitado
-    if (!es_peligro && !es_gato_o_trampa && ya_visitado) {
+    if (!es_peligro && !es_gato && ya_visitado) {
       safe_visited[n_safe_visited++] = k;
       continue;
     }
@@ -312,6 +311,7 @@ int main() {
     estado = verificar_estado(tablero_real, fila_raton, col_raton, turno);
 
     if (estado != ESTADO_EN_CURSO) {
+      usleep(PAUSA_MS * 1000);
       imprimir_tablero(tablero_real, visitado, turno, fila_raton, col_raton);
       mostrar_resultado(estado);
       break;
