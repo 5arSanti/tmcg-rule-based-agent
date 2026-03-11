@@ -16,10 +16,11 @@ const int ESTADO_EMPATE = 4;
 
 int ultimo_valor_destino = 0;
 
-void inicializar_tablero(int tablero[][COLUMNAS]) {
+void inicializar_tableros(int tablero[][COLUMNAS], bool visitado[][COLUMNAS]) {
   for (int i = 0; i < FILAS; i++) {
     for (int j = 0; j < COLUMNAS; j++) {
       tablero[i][j] = 0;
+      visitado[i][j] = false;
     }
   }
 }
@@ -28,5 +29,5 @@ int main() {
   static int tablero_real[FILAS][COLUMNAS];
   static bool visitado[FILAS][COLUMNAS];
 
-  inicializar_tablero(tablero_real);
+  inicializar_tableros(tablero_real, visitado);
 }
