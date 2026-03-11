@@ -133,34 +133,43 @@ void imprimir_tablero(int tablero[][COLUMNAS], bool visitado[][COLUMNAS],
   }
 }
 
-void obtener_movimientos_validos(int tablero[][COLUMNAS],
-                                 bool visitado[][COLUMNAS], int fila, int col,
-                                 int movs[][2], int &num_movs) {
-  num_movs = 0;
+struct Movimientos {
+  int movs[4][2];
+  int num_movs;
+};
+
+Movimientos obtener_movimientos_validos(int tablero[][COLUMNAS],
+                                        bool visitado[][COLUMNAS], int fila,
+                                        int col) {
+  Movimientos resultado;
+  resultado.num_movs = 0;
+
   // Arriba
   if (fila - 1 >= 0) {
-    movs[num_movs][0] = fila - 1;
-    movs[num_movs][1] = col;
-    ++num_movs;
+    resultado.movs[resultado.num_movs][0] = fila - 1;
+    resultado.movs[resultado.num_movs][1] = col;
+    ++resultado.num_movs;
   }
   // Abajo
   if (fila + 1 < FILAS) {
-    movs[num_movs][0] = fila + 1;
-    movs[num_movs][1] = col;
-    ++num_movs;
+    resultado.movs[resultado.num_movs][0] = fila + 1;
+    resultado.movs[resultado.num_movs][1] = col;
+    ++resultado.num_movs;
   }
   // Izquierda
   if (col - 1 >= 0) {
-    movs[num_movs][0] = fila;
-    movs[num_movs][1] = col - 1;
-    ++num_movs;
+    resultado.movs[resultado.num_movs][0] = fila;
+    resultado.movs[resultado.num_movs][1] = col - 1;
+    ++resultado.num_movs;
   }
   // Derecha
   if (col + 1 < COLUMNAS) {
-    movs[num_movs][0] = fila;
-    movs[num_movs][1] = col + 1;
-    ++num_movs;
+    resultado.movs[resultado.num_movs][0] = fila;
+    resultado.movs[resultado.num_movs][1] = col + 1;
+    ++resultado.num_movs;
   }
+
+  return resultado;
 }
 
 int main() {
