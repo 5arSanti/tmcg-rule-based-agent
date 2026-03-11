@@ -15,3 +15,11 @@ const int ESTADO_TRAMPA = 3;
 const int ESTADO_EMPATE = 4;
 
 int ultimo_valor_destino = 0;
+
+void inicializar_tablero(int tablero[][COLUMNAS]) {
+  for (int i = 0; i < FILAS; i++) {
+    for (int j = 0; j < COLUMNAS; j++) {
+      tablero[i][j] = 0;
+    }
+  }
+}
