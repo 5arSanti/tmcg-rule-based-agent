@@ -83,6 +83,16 @@ void calcular_peligros(int tablero[][COLUMNAS]) {
   }
 }
 
+int *colocar_raton(int tablero[][COLUMNAS], bool visitado[][COLUMNAS]) {
+  int fila_raton = POS_INICIAL_RATON_F;
+  int col_raton = POS_INICIAL_RATON_C;
+
+  tablero[fila_raton][col_raton] = VALOR_RATON;
+  visitado[fila_raton][col_raton] = true;
+
+  return new int[2]{fila_raton, col_raton};
+}
+
 int main() {
   static int tablero_real[FILAS][COLUMNAS];
   static bool visitado[FILAS][COLUMNAS];
@@ -91,4 +101,8 @@ int main() {
 
   colocar_actores(tablero_real);
   calcular_peligros(tablero_real);
+
+  int *posicion_raton = colocar_raton(tablero_real, visitado);
+  int fila_raton = posicion_raton[0];
+  int col_raton = posicion_raton[1];
 }
