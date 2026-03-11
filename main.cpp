@@ -1,3 +1,5 @@
+#include <cstdlib>
+
 const int FILAS = 12;
 const int COLUMNAS = 10;
 const int NUM_GATOS = 5;
@@ -16,13 +18,43 @@ const int ESTADO_EMPATE = 4;
 
 int ultimo_valor_destino = 0;
 
+const int VALOR_VACIO = 0;
+const int VALOR_RATON = 1;
+const int VALOR_GATO = 2;
+const int VALOR_TRAMPA = 3;
+const int VALOR_QUESO = 4;
+
 void inicializar_tableros(int tablero[][COLUMNAS], bool visitado[][COLUMNAS]) {
   for (int i = 0; i < FILAS; i++) {
     for (int j = 0; j < COLUMNAS; j++) {
-      tablero[i][j] = 0;
+      tablero[i][j] = VALOR_VACIO;
       visitado[i][j] = false;
     }
   }
+}
+
+void randomizar_actores(int tablero[][COLUMNAS], int max_value, int state) {
+  int colocados = 0;
+  while (colocados < max_value) {
+    int fila_aleatoria = rand() % FILAS;
+    int columna_aleatoria = rand() % COLUMNAS;
+
+    bool invalid_position = (fila_aleatoria == POS_INICIAL_RATON_F &&
+                             columna_aleatoria == POS_INICIAL_RATON_C) ||
+                            tablero[fila_aleatoria][columna_aleatoria] != 0;
+
+    if (invalid_position)
+      continue;
+
+    tablero[fila_aleatoria][columna_aleatoria] = state;
+    ++colocados;
+  }
+}
+
+void colocar_actores(int tablero[][COLUMNAS]) {
+  randomizar_actores(tablero, NUM_GATOS, VALOR_GATO);
+  randomizar_actores(tablero, NUM_TRAMPAS, VALOR_TRAMPA);
+  randomizar_actores(tablero, NUM_QUESOS, VALOR_QUESO);
 }
 
 int main() {
