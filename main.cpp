@@ -13,3 +13,5 @@ const int ESTADO_VICTORIA = 1;
 const int ESTADO_GATO = 2;
 const int ESTADO_TRAMPA = 3;
 const int ESTADO_EMPATE = 4;
+
+int ultimo_valor_destino = 0;
