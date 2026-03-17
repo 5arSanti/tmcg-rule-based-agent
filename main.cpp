@@ -287,9 +287,81 @@ void mostrar_resultado(int estado) {
   }
 }
 
+//Aqui empieza la parte de la matriz de sensaciones 
+
+const int MAX_HISTORIAL = 300;
+
+struct Sensacion {
+  int turno;
+  bool hedor;      // celda adyacente a un gato
+  bool brisa;      // celda adyacente a una trampa
+  bool resplandor; // el raton esta en la celda del queso
+  bool golpe;      // el raton intento moverse fuera del tablero
+  bool grito;      // el raton cayo sobre un gato
+};
+
+struct HistorialSensaciones {
+  Sensacion registros[MAX_HISTORIAL];
+  int cantidad;
+};
+
+Sensacion detectar_sensaciones(int tablero[][COLUMNAS], int fila, int col,
+                                int turno) {
+  Sensacion s;
+  s.turno      = turno;
+  s.hedor      = false;
+  s.brisa      = false;
+  s.resplandor = (ultimo_valor_destino == VALOR_QUESO);
+  s.golpe      = false;
+  s.grito      = (ultimo_valor_destino == VALOR_GATO);
+
+  int df[] = {-1, 1, 0, 0};
+  int dc[] = {0, 0, -1, 1};
+
+  for (int d = 0; d < 4; ++d) {
+    int nf = fila + df[d];
+    int nc = col  + dc[d];
+    if (nf < 0 || nf >= FILAS || nc < 0 || nc >= COLUMNAS) continue;
+    if (tablero[nf][nc] == VALOR_GATO)    s.hedor = true;
+    if (tablero[nf][nc] == VALOR_TRAMPA)  s.brisa = true;
+    if (tablero[nf][nc] == VALOR_PELIGRO) s.hedor = true;
+  }
+
+  return s;
+}
+
+void registrar_sensacion(HistorialSensaciones &h, Sensacion s) {
+  if (h.cantidad < MAX_HISTORIAL)
+    h.registros[h.cantidad++] = s;
+}
+
+void imprimir_tabla_sensaciones(const HistorialSensaciones &h) {
+  std::cout << "\n--- Matriz de Sensaciones ---\n";
+  std::cout << "Turno | Hedor | Brisa | Resplandor | Golpe | Grito\n";
+  std::cout << "------+-------+-------+------------+-------+-------\n";
+
+  int inicio = (h.cantidad > 8) ? h.cantidad - 8 : 0;
+
+  for (int i = inicio; i < h.cantidad; ++i) {
+    const Sensacion &s = h.registros[i];
+    std::cout << "  " << s.turno
+              << "   |  " << (s.hedor      ? "Si " : "No ")
+              << "  |  " << (s.brisa      ? "Si " : "No ")
+              << "  |     " << (s.resplandor ? "Si    " : "No    ")
+              << "|  "    << (s.golpe      ? "Si " : "No ")
+              << "  |  "  << (s.grito      ? "Si" : "No")
+              << "\n";
+  }
+}
+
+
 int main() {
   static int tablero_real[FILAS][COLUMNAS];
   static bool visitado[FILAS][COLUMNAS];
+
+  // Historial de sensaciones
+  HistorialSensaciones historial;
+  historial.cantidad = 0;
 
   inicializar_tableros(tablero_real, visitado);
   colocar_actores(tablero_real);
@@ -304,7 +376,14 @@ int main() {
   int turno = 1;
 
   while (juego_activo) {
+    // Registrar sensaciones del turno actual 
+    registrar_sensacion(historial,
+      detectar_sensaciones(tablero_real, fila_raton, col_raton, turno));
+
     imprimir_tablero(tablero_real, visitado, turno, fila_raton, col_raton);
+
+    // Imprimir tabla de sensaciones debajo del tablero 
+    imprimir_tabla_sensaciones(historial);
 
     mover_raton(tablero_real, visitado, fila_raton, col_raton);
 
@@ -313,6 +392,7 @@ int main() {
     if (estado != ESTADO_EN_CURSO) {
       usleep(PAUSA_MS * 1000);
       imprimir_tablero(tablero_real, visitado, turno, fila_raton, col_raton);
+      imprimir_tabla_sensaciones(historial); 
       mostrar_resultado(estado);
       break;
     }
